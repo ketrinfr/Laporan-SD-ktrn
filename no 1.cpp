@@ -1,39 +1,53 @@
 //created by ketherin fathur rahma
 
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 
-// Definisikan struct untuk data mahasiswa
-struct Mahasiswa {
-    char NIM[20];
-    char Nama[50];
-    char TanggalLahir[20];
-    float IPK;
-};
+// Fungsi untuk menghitung dan menampilkan deret Fibonacci
+void displayFibonacci(int n) {
+    int *fibonacci = (int *)malloc(n * sizeof(int));
+
+    // Pengecekan alokasi memori
+    if (fibonacci == NULL) {
+        printf("Alokasi memori gagal\n");
+        exit(1);
+    }
+
+    // Inisialisasi dua elemen pertama dari deret Fibonacci
+    fibonacci[0] = 0;
+    fibonacci[1] = 1;
+
+    // Menghitung dan menyimpan deret Fibonacci
+    for (int i = 2; i < n; i++) {
+        fibonacci[i] = fibonacci[i - 1] + fibonacci[i - 2];
+    }
+
+    // Menampilkan deret Fibonacci
+    printf("Deret Fibonacci pertama %d:\n", n);
+    for (int i = 0; i < n; i++) {
+        printf("%d ", fibonacci[i]);
+    }
+    printf("\n");
+
+    // Membebaskan memori yang dialokasikan
+    free(fibonacci);
+}
 
 int main() {
-    // Deklarasi variabel bertipe struct Mahasiswa
-    struct Mahasiswa mhs1;
+    int n;
 
-    // Input data mahasiswa
-    printf("Masukkan NIM: ");
-    scanf("%s", mhs1.NIM);
+    // Meminta pengguna untuk memasukkan nilai n
+    printf("Masukkan nilai n: ");
+    scanf("%d", &n);
 
-    printf("Masukkan Nama: ");
-    scanf("%s", mhs1.Nama);
+    // Memastikan n tidak negatif
+    if (n <= 0) {
+        printf("Nilai n harus lebih besar dari 0.\n");
+        return 1;
+    }
 
-    printf("Masukkan Tanggal Lahir (DD/MM/YYYY): ");
-    scanf("%s", mhs1.TanggalLahir);
-
-    printf("Masukkan IPK: ");
-    scanf("%f", &mhs1.IPK);
-
-    // Menampilkan data mahasiswa
-    printf("\nData Mahasiswa:\n");
-    printf("NIM: %s\n", mhs1.NIM);
-    printf("Nama: %s\n", mhs1.Nama);
-    printf("Tanggal Lahir: %s\n", mhs1.TanggalLahir);
-    printf("IPK: %.2f\n", mhs1.IPK);
+    // Menampilkan deret Fibonacci
+    displayFibonacci(n);
 
     return 0;
 }
