@@ -1,77 +1,113 @@
-//created by ketherin fathur rahma
+//creatd by ketherin fathur rahma
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include <string.h>
 
-// Fungsi untuk memeriksa apakah sebuah bilangan prima atau bukan
-bool isPrime(int num) {
-    if (num <= 1) {
-        return false;
+// Structure untuk data mobil
+struct Mobil {
+    char no_plat[15];
+    char merk[50];
+    char nama_pemilik[100];
+    struct Mobil *next;
+    struct Mobil *prev;
+};
+
+// Fungsi untuk menambahkan mobil ke akhir linked list
+void tambahMobil(struct Mobil** head, char no_plat[], char merk[], char nama_pemilik[]) {
+    // Membuat node baru
+    struct Mobil* newNode = (struct Mobil*)malloc(sizeof(struct Mobil));
+    strcpy(newNode->no_plat, no_plat);
+    strcpy(newNode->merk, merk);
+    strcpy(newNode->nama_pemilik, nama_pemilik);
+    newNode->next = NULL;
+
+    // Jika linked list masih kosong, maka newNode menjadi head
+    if (*head == NULL) {
+        newNode->prev = NULL;
+        *head = newNode;
+        return;
     }
-    for (int i = 2; i * i <= num; i++) {
-        if (num % i == 0) {
-            return false;
-        }
+
+    // Menemukan akhir dari linked list
+    struct Mobil* last = *head;
+    while (last->next != NULL) {
+        last = last->next;
     }
-    return true;
+
+    // Menambahkan newNode ke akhir linked list
+    last->next = newNode;
+    newNode->prev = last;
 }
 
-// Fungsi untuk menampilkan bilangan prima pertama sampai ke-n
-void displayPrimes(int n, int m) {
-    int *primes = (int *)malloc(m * sizeof(int));
-
-    if (primes == NULL) {
-        printf("Alokasi memori gagal\n");
-        exit(1);
+// Fungsi untuk menghapus mobil berdasarkan no plat
+void hapusMobil(struct Mobil** head, char no_plat[]) {
+    // Jika linked list kosong
+    if (*head == NULL) {
+        printf("Linked list kosong. Tidak ada mobil untuk dihapus.\n");
+        return;
     }
 
-    int count = 0; // Jumlah bilangan prima yang sudah ditemukan
-
-    for (int num = 2; count < n; num++) {
-        if (isPrime(num)) {
-            if (count >= m) {
-                // Menambah ukuran alokasi memori menggunakan realloc jika dibutuhkan
-                m *= 2;
-                primes = (int *)realloc(primes, m * sizeof(int));
-                if (primes == NULL) {
-                    printf("Alokasi memori gagal\n");
-                    exit(1);
-                }
-            }
-            primes[count++] = num; // Menyimpan bilangan prima dalam array
+    // Jika mobil yang akan dihapus adalah head
+    if (strcmp((*head)->no_plat, no_plat) == 0) {
+        struct Mobil* temp = *head;
+        *head = (*head)->next;
+        if (*head != NULL) {
+            (*head)->prev = NULL;
         }
+        free(temp);
+        printf("Mobil dengan nomor plat '%s' berhasil dihapus.\n", no_plat);
+        return;
     }
 
-    // Menampilkan bilangan prima
-    printf("Bilangan prima pertama %d:\n", n);
-    for (int i = 0; i < n; i++) {
-        printf("%d ", primes[i]);
+    // Mencari mobil yang akan dihapus
+    struct Mobil* current = *head;
+    while (current != NULL && strcmp(current->no_plat, no_plat) != 0) {
+        current = current->next;
     }
-    printf("\n");
 
-    // Membebaskan memori yang dialokasikan
-    free(primes);
+    // Jika mobil ditemukan
+    if (current != NULL) {
+        current->prev->next = current->next;
+        if (current->next != NULL) {
+            current->next->prev = current->prev;
+        }
+        free(current);
+        printf("Mobil dengan nomor plat '%s' berhasil dihapus.\n", no_plat);
+    } else {
+        printf("Mobil dengan nomor plat '%s' tidak ditemukan.\n", no_plat);
+    }
+}
+
+// Fungsi untuk menampilkan seluruh data mobil dalam linked list
+void tampilkanMobil(struct Mobil* head) {
+    if (head == NULL) {
+        printf("Linked list kosong. Tidak ada mobil yang ditampilkan.\n");
+        return;
+    }
+
+    printf("\nAntrian Mobil di Perparkiran:\n");
+    while (head != NULL) {
+        printf("Nomor Plat: %s\n", head->no_plat);
+        printf("Merk Mobil: %s\n", head->merk);
+        printf("Nama Pemilik: %s\n", head->nama_pemilik);
+        printf("--------------------------------\n");
+        head = head->next;
+    }
 }
 
 int main() {
-    int n, m;
+    struct Mobil* head = NULL;
 
-    // Meminta pengguna untuk memasukkan nilai n dan m
-    printf("Masukkan nilai n: ");
-    scanf("%d", &n);
-    printf("Masukkan ukuran awal alokasi memori (m): ");
-    scanf("%d", &m);
+    tambahMobil(&head, "B 1234 ABC", "Toyota Avanza", "Ahmad");
+    tambahMobil(&head, "B 5678 XYZ", "Honda Civic", "Budi");
+    tambahMobil(&head, "B 9876 QWE", "Suzuki Ertiga", "Cindy");
 
-    // Memastikan n dan m tidak negatif
-    if (n <= 0 || m <= 0) {
-        printf("Nilai n dan m harus lebih besar dari 0.\n");
-        return 1;
-    }
+    tampilkanMobil(head);
 
-    // Menampilkan bilangan prima
-    displayPrimes(n, m);
+    hapusMobil(&head, "B 5678 XYZ");
+
+    tampilkanMobil(head);
 
     return 0;
 }
-
