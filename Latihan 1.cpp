@@ -1,68 +1,61 @@
 //Created by 23343072_ketherin fathur rahma
-
 #include <stdio.h>
+#define ukuran 5
 
-int MAXSIZE = 8;
-int stack[8];
-int top = -1;
-int isempty() {
-	
-	if(top == -1)
-		return 1;
-	else
-		return 0;
-}
+void enQueue(int);
+void deQueue();
+void tampilkan();
+int items[ukuran], depan = -1, belakang = -1;
 
-int isFull() {
-	if(top == MAXSIZE - 1)
-		return 1;
-	else
-		return 0;
-}
-
-int peek() {
-	return stack[top];
-}
-int pop() {
-	int data;
-	
-	if(!isempty()) {
-		data = stack[top];
-		top = top - 1;
-		return data;
-	} else {
-		printf("Tidak dapat mengambil data, stack kosong.\n");
-	}
-}
-
-int push(int data) {
-	if(!isFull()) {
-		top = top + 1;
-		stack[top] = data;
-	} else {
-		printf("Tidak dapat menambahkan data, stack penuh.\n");
-	}
-}
-
-int main() {
-	
-	push(3);
-	push(5);
-	push(9);
-	push(1);
-	push(12);
-	push(15);
-	
-	printf("Elemen teratas pada Stack adalah : %d\n", peek());
-	printf("Semua elemennya adalah : \n");
-	
-	while(!isempty()) {
-		int data = pop();
-		printf("%d\n", data);
-	}
-	
-	printf("Stack full : %s\n", isFull()?"true":"false");
-	printf("Stack empty : %s\n", isempty()?"true":"false");
-	
+int main()
+{
+	deQueue();
+	enQueue(7);
+	enQueue(8);
+	enQueue(3);
+	enQueue(4);
+	enQueue(9);
+	enQueue(6);
+	deQueue();
+	tampilkan();
 	return 0;
+}
+
+void enQueue(int value)
+{
+	if(belakang == ukuran-1)
+		printf("\nQueue telah penuh!");
+	else 
+	{
+		if(depan == -1)
+		depan = 0;
+		belakang++;
+		items[belakang] = value;
+		printf("\nNilai ditambahkan -> %d", value);
+	}
+}
+void deQueue()
+{
+	if(depan == -1)
+		printf("\nQueue kosong!!");
+	else
+	{
+		printf("\nNilai dihapus adalah : %d", items[depan]);
+		depan++;
+		if(depan > belakang)
+		depan = belakang = -1;
+	}
+}
+
+void tampilkan()
+{
+	if(belakang == -1)
+		printf("\nQueue kosong!!!");
+	else
+	{
+		int i;
+		printf("\nElemen pada Queue adalah:\n");
+		for(i=depan; i<=belakang; i++)
+		printf("%d\t",items[i]);
+	}
 }
